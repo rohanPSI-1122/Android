@@ -20,7 +20,7 @@ pipeline {
 
     stage('Install Dependencies') {
       steps {
-        sh 'npm install'
+        sh 'npm install --legacy-peer-deps'
       }
     }
 
@@ -73,4 +73,4 @@ pipeline {
       echo "❌ Build failed."
     }
   }
-}
+} // <- This closing brace was missing!
