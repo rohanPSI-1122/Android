@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "react-native start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "echo \"No tests defined\" && exit 0"
   },
   "dependencies": {
     "react-native": "^0.20.0",
@@ -12,5 +13,8 @@
     "react-native-scrollable-tab-view": "^0.3.8",
     "react-native-vector-icons": "^1.2.1",
     "react-native-activity-view": "^0.2.5"
+  },
+  "devDependencies": {
+    "eslint": "^8.56.0"
   }
 }
