@@ -3,13 +3,12 @@ pipeline {
 
   environment {
     NODE_ENV = 'development'
-    // Adjust Android SDK path according to your CentOS system
     ANDROID_HOME = '/opt/android-sdk'
     PATH = "${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/emulator:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${PATH}"
   }
 
   tools {
-    nodejs 'jsnode' // Must be defined under Jenkins global tool configuration
+    nodejs 'jsnode' // Must match the name configured in Jenkins global tool config
   }
 
   stages {
@@ -27,12 +26,11 @@ pipeline {
 
     stage('Lint') {
       steps {
-        // Skip failure if eslint is not installed or returns non-zero
         script {
           try {
-            sh 'npm run lint'
+            sh 'npx eslint .'
           } catch (Exception e) {
-            echo "Linting failed or ESLint not installed. Continuing..."
+            echo "⚠️ Linting failed or ESLint not installed. Continuing..."
           }
         }
       }
@@ -44,7 +42,7 @@ pipeline {
           try {
             sh 'npm test'
           } catch (Exception e) {
-            echo "Tests failed or none defined. Continuing..."
+            echo "⚠️ Tests failed or not defined. Continuing..."
           }
         }
       }
@@ -53,6 +51,8 @@ pipeline {
     stage('Build APK') {
       steps {
         dir('android') {
+          // Ensure gradlew is executable
+          sh 'chmod +x gradlew'
           sh './gradlew assembleDebug'
         }
       }
