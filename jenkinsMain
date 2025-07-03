@@ -1,0 +1,57 @@
+pipeline {
+  agent any
+
+  environment {
+    NODE_ENV = 'Node'
+    ANDROID_HOME = "/opt/android-sdk"  // Adjust path to match Jenkins agent
+    PATH = "$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH"
+  }
+
+  tools {
+    nodejs 'jsnode'  // Set this in Jenkins global tools config
+  }
+
+  stages {
+    stage('Checkout Code') {
+      steps {
+        git branch: 'main', url: 'https://github.com/rohanPSI-1122/Android.git'
+      }
+    }
+
+    stage('Install Dependencies') {
+      steps {
+        sh 'npm install'
+      }
+    }
+
+    stage('Lint & Test') {
+      steps {
+        sh 'npm run lint'
+        sh 'npm test'
+      }
+    }
+
+    stage('Build APK') {
+      steps {
+        dir('android') {
+          sh './gradlew assembleDebug'
+        }
+      }
+    }
+
+    stage('Archive APK') {
+      steps {
+        archiveArtifacts artifacts: '**/app/build/outputs/**/*.apk', fingerprint: true
+      }
+    }
+  }
+
+  post {
+    success {
+      echo "Build completed successfully!"
+    }
+    failure {
+      echo "Build failed."
+    }
+  }
+}
